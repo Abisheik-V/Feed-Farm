@@ -13,9 +13,19 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    body {
+    /* Reset and Prevent Overflow */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden !important;
       font-family: 'Poppins', sans-serif;
-      overflow-x: hidden;
+      scroll-behavior: smooth;
+      background-color: #fff;
     }
 
     /* Navbar */
@@ -29,19 +39,27 @@
     .nav-link {
       color: #fff !important;
       font-weight: 500;
+      transition: 0.3s;
+    }
+    .nav-link:hover {
+      opacity: 0.8;
     }
 
-    /* Checkout Form */
+    /* Header Section */
+    header {
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px;
+      margin-top: 56px;
+      width: 100%;
+    }
+
+    /* Checkout Section */
     .checkout-container {
-      margin-top: 100px;
+      margin-top: 60px;
       margin-bottom: 80px;
-    }
-
-    .summary-card {
-      background: #f8f9fa;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow-x: hidden;
     }
 
     .form-section {
@@ -49,6 +67,28 @@
       border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       padding: 25px;
+      width: 100%;
+    }
+
+    .summary-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: #388E3C;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #2E7D32;
     }
 
     /* Footer */
@@ -56,14 +96,34 @@
       background: #2E7D32;
       color: white;
       padding: 40px 0;
+      width: 100%;
+      overflow-x: hidden;
+    }
+    footer a {
+      color: white;
+      transition: 0.3s;
+    }
+    footer a:hover {
+      opacity: 0.8;
     }
 
-    .btn-primary {
-      background-color: #388E3C;
-      border: none;
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .checkout-container {
+        margin-top: 40px;
+      }
+      .form-section, .summary-card {
+        padding: 20px;
+      }
     }
-    .btn-primary:hover {
-      background-color: #2E7D32;
+
+    @media (max-width: 576px) {
+      header {
+        padding: 60px 10px;
+      }
+      .form-section, .summary-card {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -84,19 +144,17 @@
           <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
           <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
           <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
-            <li class="nav-item"><a class="nav-link" href="track-order.html">Track Order</a></li>
+          <li class="nav-item"><a class="nav-link" href="track-order.html">Track Order</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
   <!-- Header -->
-  <section class="py-5 text-center text-white" style="background: linear-gradient(90deg,#4CAF50,#8BC34A); margin-top: 56px;">
-    <div class="container" data-aos="fade-up">
-      <h1>Checkout</h1>
-      <p>Complete your purchase securely</p>
-    </div>
-  </section>
+  <header data-aos="fade-up">
+    <h1>Checkout</h1>
+    <p>Complete your purchase securely</p>
+  </header>
 
   <!-- Checkout Section -->
   <section class="container checkout-container">
@@ -105,7 +163,7 @@
       <div class="col-lg-7" data-aos="fade-right">
         <div class="form-section">
           <h4 class="mb-4"><i class="bi bi-person-lines-fill me-2"></i>Billing Details</h4>
-          <form id="checkoutForm">
+          <form id="checkoutForm" novalidate>
             <div class="mb-3">
               <label for="name" class="form-label">Full Name</label>
               <input type="text" id="name" class="form-control" placeholder="John Doe" required>
@@ -127,6 +185,7 @@
                 <option value="upi">UPI Payment</option>
               </select>
             </div>
+
             <div id="cardDetails" style="display: none;">
               <div class="mb-3">
                 <label for="cardNumber" class="form-label">Card Number</label>
@@ -190,6 +249,7 @@
   <!-- JS Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
   <script>
     AOS.init();
 
@@ -197,18 +257,14 @@
     const cardDetails = document.getElementById('cardDetails');
     const checkoutForm = document.getElementById('checkoutForm');
 
-    // Show or hide card input fields based on payment type
+    // Toggle card fields visibility
     paymentSelect.addEventListener('change', () => {
-      if (paymentSelect.value === 'card') {
-        cardDetails.style.display = 'block';
-      } else {
-        cardDetails.style.display = 'none';
-      }
+      cardDetails.style.display = paymentSelect.value === 'card' ? 'block' : 'none';
     });
 
-    // Calculate order total (simulate data from cart)
+    // Simulate order total calculation
     function calculateTotal() {
-      const subtotal = 1200 + 950; // example products
+      const subtotal = 1200 + 950;
       const shipping = 150;
       const total = subtotal + shipping;
       document.getElementById('subtotal').innerText = `₹${subtotal}`;
@@ -216,7 +272,7 @@
     }
     calculateTotal();
 
-    // Form submit
+    // Handle form submission
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
@@ -224,7 +280,7 @@
       const payment = paymentSelect.value;
 
       if (!name || !address || !payment) {
-        alert('Please fill in all required fields!');
+        alert('⚠️ Please fill in all required fields!');
         return;
       }
 
